@@ -6,8 +6,9 @@ import { HomePage } from "./pages/HomePage";
 import { CatalogPage } from "./pages/CatalogPage";
 import { ProductPage } from "./pages/ProductPage";
 import { AboutPage } from "./pages/AboutPage";
+import { DeliveryPage } from "./pages/DeliveryPage";
+import { ReturnsPage } from "./pages/ReturnsPage";
 import { ContactsPage } from "./pages/ContactsPage";
-import { AccountPage } from "./pages/AccountPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 
 // Маршрути. Усі сторінки живуть під спільним Layout (хедер/футер/кошик).
@@ -19,8 +20,9 @@ const router = createBrowserRouter([
       { path: "/catalog", element: <CatalogPage /> },
       { path: "/product/:id", element: <ProductPage /> },
       { path: "/about", element: <AboutPage /> },
+      { path: "/delivery", element: <DeliveryPage /> },
+      { path: "/returns", element: <ReturnsPage /> },
       { path: "/contacts", element: <ContactsPage /> },
-      { path: "/account", element: <AccountPage /> },
       { path: "*", element: <NotFoundPage /> },
     ],
   },

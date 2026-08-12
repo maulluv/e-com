@@ -52,8 +52,12 @@ export function Footer() {
             <li>
               <Link to="/contacts" className="text-fg-muted hover:text-brand">Контакти</Link>
             </li>
-            <li className="text-fg-muted">Доставка й оплата</li>
-            <li className="text-fg-muted">Повернення та гарантія</li>
+            <li>
+              <Link to="/delivery" className="text-fg-muted hover:text-brand">Доставка й оплата</Link>
+            </li>
+            <li>
+              <Link to="/returns" className="text-fg-muted hover:text-brand">Повернення та гарантія</Link>
+            </li>
           </ul>
         </div>
 

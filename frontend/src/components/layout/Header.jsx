@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { Menu, Phone, ShoppingCart, Truck, User, Wrench, X } from "lucide-react";
+import { ChevronDown, Menu, Phone, ShoppingCart, Truck, Wrench, X } from "lucide-react";
 import { Container } from "../ui/Container";
 import { IconButton } from "../ui/IconButton";
 import { SearchBar } from "../catalog/SearchBar";
@@ -10,8 +10,9 @@ import { site } from "../../config/site";
 import { cn } from "../../lib/cn";
 
 /**
- * Шапка сайту: верхня смуга з контактами, логотип, пошук, навігація,
- * кабінет і кошик. На мобільних навігація згортається в бургер.
+ * Шапка сайту: верхня смуга з контактами, логотип, пошук, навігація, кошик.
+ * Пункт меню з підпунктами (children) показує випадаюче підменю.
+ * На мобільних навігація згортається в бургер.
  */
 export function Header() {
   const { totalItems, open } = useCart();
@@ -68,14 +69,6 @@ export function Header() {
 
           {/* Дії */}
           <div className="flex items-center gap-1">
-            <Link
-              to="/account"
-              aria-label="Особистий кабінет"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-xl text-fg transition-colors hover:bg-muted"
-            >
-              <User className="h-5 w-5" />
-            </Link>
-
             <IconButton label="Кошик" onClick={open}>
               <ShoppingCart className="h-5 w-5" />
               {totalItems > 0 && (
@@ -99,21 +92,20 @@ export function Header() {
       {/* Нижній рядок навігації (desktop) */}
       <nav className="hidden border-b border-border bg-surface md:block">
         <Container className="flex h-11 items-center gap-1">
-          {navLinks.map((link) => (
-            <NavLink
-              key={link.to}
-              to={link.to}
-              end={link.to === "/"}
-              className={({ isActive }) =>
-                cn(
-                  "rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
-                  isActive ? "text-brand" : "text-fg-muted hover:text-fg",
-                )
-              }
-            >
-              {link.label}
-            </NavLink>
-          ))}
+          {navLinks.map((link) =>
+            link.children ? (
+              <DesktopDropdown key={link.to} link={link} />
+            ) : (
+              <NavLink
+                key={link.to}
+                to={link.to}
+                end={link.to === "/"}
+                className={({ isActive }) => navItemClass(isActive)}
+              >
+                {link.label}
+              </NavLink>
+            ),
+          )}
         </Container>
       </nav>
 
@@ -131,25 +123,99 @@ export function Header() {
             >
               <SearchBar value={search} onChange={setSearch} />
             </form>
-            {navLinks.map((link) => (
-              <NavLink
-                key={link.to}
-                to={link.to}
-                end={link.to === "/"}
-                onClick={() => setMobileOpen(false)}
-                className={({ isActive }) =>
-                  cn(
-                    "rounded-lg px-3 py-3 text-sm font-medium",
-                    isActive ? "text-brand" : "text-fg",
-                  )
-                }
-              >
-                {link.label}
-              </NavLink>
-            ))}
+
+            {navLinks.map((link) =>
+              link.children ? (
+                // Батьківський пункт як підпис + вкладені посилання (без дубля самого себе).
+                <div key={link.to} className="py-1">
+                  <NavLink
+                    to={link.to}
+                    onClick={() => setMobileOpen(false)}
+                    className={({ isActive }) =>
+                      cn("block rounded-lg px-3 py-3 text-sm font-medium", isActive ? "text-brand" : "text-fg")
+                    }
+                  >
+                    {link.label}
+                  </NavLink>
+                  <div className="ml-3 flex flex-col border-l border-border pl-2">
+                    {link.children
+                      .filter((c) => c.to !== link.to)
+                      .map((child) => (
+                        <NavLink
+                          key={child.to}
+                          to={child.to}
+                          onClick={() => setMobileOpen(false)}
+                          className={({ isActive }) =>
+                            cn("rounded-lg px-3 py-2.5 text-sm", isActive ? "text-brand" : "text-fg-muted")
+                          }
+                        >
+                          {child.label}
+                        </NavLink>
+                      ))}
+                  </div>
+                </div>
+              ) : (
+                <NavLink
+                  key={link.to}
+                  to={link.to}
+                  end={link.to === "/"}
+                  onClick={() => setMobileOpen(false)}
+                  className={({ isActive }) =>
+                    cn("rounded-lg px-3 py-3 text-sm font-medium", isActive ? "text-brand" : "text-fg")
+                  }
+                >
+                  {link.label}
+                </NavLink>
+              ),
+            )}
           </Container>
         </nav>
       )}
     </header>
+  );
+}
+
+function navItemClass(isActive) {
+  return cn(
+    "rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
+    isActive ? "text-brand" : "text-fg-muted hover:text-fg",
+  );
+}
+
+/** Пункт меню з випадаючим підменю (desktop). Відкривається на hover/focus. */
+function DesktopDropdown({ link }) {
+  return (
+    <div className="group relative">
+      <NavLink
+        to={link.to}
+        className={({ isActive }) => cn(navItemClass(isActive), "inline-flex items-center gap-1")}
+      >
+        {link.label}
+        <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
+      </NavLink>
+
+      <div
+        className={cn(
+          "invisible absolute left-0 top-full z-40 min-w-56 rounded-xl border border-border bg-surface p-1 opacity-0 shadow-lg transition",
+          "group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100",
+        )}
+      >
+        {link.children.map((child) => (
+          <NavLink
+            key={child.to}
+            to={child.to}
+            end
+            className={({ isActive }) =>
+              cn(
+                "block rounded-lg px-3 py-2 text-sm transition-colors",
+                isActive ? "bg-brand/5 text-brand" : "text-fg hover:bg-muted",
+              )
+            }
+          >
+            {child.label}
+          </NavLink>
+        ))}
+      </div>
+    </div>
   );
 }
