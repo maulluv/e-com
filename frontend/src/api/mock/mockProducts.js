@@ -113,7 +113,17 @@ export const mockProducts = [
     subcategory: "timing-kit",
     condition: "Б/в",
     oem: true,
-    fits: ["vw", "audi", "skoda"],
+    fits: [
+      "golf-6",
+      "golf-7",
+      "jetta-5",
+      "jetta-6",
+      "passat-b6",
+      "passat-b7",
+      "octavia-a5",
+      "octavia-a7",
+      "a4-b8",
+    ],
     inStock: false,
   },
   {
@@ -146,7 +156,7 @@ export const mockProducts = [
     subcategory: "stabilizer-links",
     condition: "Новий",
     oem: false,
-    fits: ["vw", "audi", "skoda"],
+    fits: ["golf-6", "golf-7", "jetta-5", "jetta-6", "octavia-a5", "octavia-a7", "a4-b8"],
     inStock: true,
   },
   {

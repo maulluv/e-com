@@ -75,7 +75,8 @@ export function Catalog({ controls = true, limit }) {
       const byCat = activeCat === "all" || p.category === activeCat;
       const bySub = !activeSub || p.subcategory === activeSub;
       const byText = !q || `${p.title} ${p.brand} ${p.sku}`.toLowerCase().includes(q);
-      const byVehicle = !vehicle || !p.fits || p.fits.includes(vehicle.brandId);
+      // Без fits — універсальний; інакше має підходити обраному поколінню авто.
+      const byVehicle = !vehicle || !p.fits || p.fits.includes(vehicle.genId);
       return byCat && bySub && byText && byVehicle;
     });
   }, [products, activeCat, activeSub, query, vehicle]);
