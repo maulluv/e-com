@@ -167,3 +167,48 @@ export const vehicleBrands = [
     ],
   },
 ];
+
+/**
+ * Знаходить покоління за його id у всьому дереві авто.
+ * Повертає { brandId, brandLabel, modelLabel, genLabel, years } або null.
+ * Використовується для показу сумісності товару (product.fits — масив genId).
+ */
+export function findGeneration(genId) {
+  for (const brand of vehicleBrands) {
+    for (const model of brand.models) {
+      const gen = model.generations.find((g) => g.id === genId);
+      if (gen) {
+        return {
+          brandId: brand.id,
+          brandLabel: brand.label,
+          modelLabel: model.label,
+          genLabel: gen.label,
+          years: gen.years,
+        };
+      }
+    }
+  }
+  return null;
+}
+
+/** Унікальні марки, до яких підходить товар (для компактної позначки в картці). */
+export function compatibleBrands(genIds) {
+  const map = new Map();
+  for (const id of genIds) {
+    const g = findGeneration(id);
+    if (g) map.set(g.brandId, g.brandLabel);
+  }
+  return [...map.values()];
+}
+
+/** Сумісність, згрупована за маркою (для сторінки товару). */
+export function groupCompatibility(genIds) {
+  const byBrand = new Map();
+  for (const id of genIds) {
+    const g = findGeneration(id);
+    if (!g) continue;
+    if (!byBrand.has(g.brandId)) byBrand.set(g.brandId, { brandLabel: g.brandLabel, items: [] });
+    byBrand.get(g.brandId).items.push({ genLabel: g.genLabel, years: g.years });
+  }
+  return [...byBrand.values()];
+}

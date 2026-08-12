@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
-import { ShoppingCart } from "lucide-react";
+import { Car, ShoppingCart } from "lucide-react";
 import { Button } from "../ui/Button";
 import { Badge } from "../ui/Badge";
 import { useCart } from "../../context/CartContext";
 import { formatPrice } from "../../lib/format";
+import { compatibleBrands } from "../../config/vehicles";
 import { cn } from "../../lib/cn";
 
 /** Картка товару. Уся картка — посилання на сторінку товару; кнопка "Купити" не навігує. */
@@ -52,10 +53,20 @@ export function ProductCard({ product }) {
           </span>
         </div>
 
-        <h3 className="mt-1.5 font-semibold leading-snug text-fg">{product.title}</h3>
+        <h3 className="mt-1.5 line-clamp-2 min-h-[2.75rem] font-semibold leading-snug text-fg">
+          {product.title}
+        </h3>
         <p className="mt-1 line-clamp-2 text-sm text-fg-muted">{product.description}</p>
 
-        <div className="mt-4 flex items-center justify-between gap-2">
+        {/* Позначка сумісності: універсальна або перелік марок */}
+        <p className="mt-2 flex items-center gap-1.5 text-xs text-fg-muted">
+          <Car className="h-3.5 w-3.5 shrink-0" />
+          <span className="truncate">
+            {product.fits ? compatibleBrands(product.fits).join(", ") : "Універсальна"}
+          </span>
+        </p>
+
+        <div className="mt-auto flex items-end justify-between gap-2 pt-4">
           <div className="flex flex-col">
             {product.sale && product.oldPrice && (
               <span className="text-xs text-fg-muted line-through">

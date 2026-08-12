@@ -21,12 +21,7 @@ import { useProduct } from "../hooks/useProduct";
 import { useCart } from "../context/CartContext";
 import { formatPrice } from "../lib/format";
 import { categoryLabel, subcategoryLabel } from "../config/categories";
-import { vehicleBrands } from "../config/vehicles";
-
-/** Підписи марок авто за id (для блоку сумісності). */
-function fitsLabels(fits) {
-  return fits.map((id) => vehicleBrands.find((b) => b.id === id)?.label ?? id);
-}
+import { groupCompatibility } from "../config/vehicles";
 
 export function ProductPage() {
   const { id } = useParams();
@@ -112,14 +107,25 @@ export function ProductPage() {
 
           {/* Сумісність */}
           <div className="mt-5 rounded-xl border border-border bg-surface p-4">
-            <p className="mb-1 flex items-center gap-2 text-sm font-semibold text-fg">
+            <p className="mb-2 flex items-center gap-2 text-sm font-semibold text-fg">
               <CheckCircle2 className="h-4 w-4 text-success" /> Сумісність
             </p>
-            <p className="text-sm text-fg-muted">
-              {product.fits
-                ? fitsLabels(product.fits).join(", ")
-                : "Підходить на різні авто — уточнюйте сумісність за артикулом."}
-            </p>
+            {product.fits ? (
+              <div className="flex flex-col gap-1.5">
+                {groupCompatibility(product.fits).map((grp) => (
+                  <div key={grp.brandLabel} className="text-sm">
+                    <span className="font-medium text-fg">{grp.brandLabel}:</span>{" "}
+                    <span className="text-fg-muted">
+                      {grp.items.map((i) => `${i.genLabel} (${i.years})`).join(", ")}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-fg-muted">
+                Універсальна деталь — підходить на різні авто. Уточнюйте сумісність за артикулом.
+              </p>
+            )}
           </div>
 
           {/* Ціна + кошик */}
