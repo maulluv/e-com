@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+/*
+  Токени дизайну (Tailwind v4).
+  Тема: автозапчастини — автомобільний червоний акцент + темний "індустріальний" герой.
+  Уся палітра/типографіка проекту живе тут. Компоненти використовують
+  семантичні класи (bg-surface, text-fg, border-border, bg-brand...),
+  тож зміна дизайну = зміна кількох змінних нижче, без правок у компонентах.
+*/
+@theme {
+  --color-brand: #e11d2f;
+  --color-brand-hover: #b91c25;
+  --color-brand-fg: #ffffff;
+
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-muted: #f1f5f9;
+
+  --color-fg: #0f172a;
+  --color-fg-muted: #64748b;
+
+  --color-border: #e2e8f0;
+
+  /* Темний фон героя/акцентних секцій */
+  --color-ink: #0b1120;
+  --color-ink-muted: #1e293b;
+
+  --color-danger: #ef4444;
+  --color-success: #10b981;
+
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+
+  --radius-card: 1rem;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}

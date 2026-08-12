@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800">
+  <rect width="800" height="800" fill="#eef2f7"/>
+  <rect x="380" y="205" width="60" height="34" rx="6" fill="#334155"/>
+  <path d="M320 260 h180 a24 24 0 0 1 24 24 v280 a24 24 0 0 1 -24 24 h-180 a24 24 0 0 1 -24 -24 v-280 a24 24 0 0 1 24 -24 z"
+        fill="#ef4444" stroke="#334155" stroke-width="10"/>
+  <path d="M524 300 h40 a24 24 0 0 1 24 24 v64 a24 24 0 0 1 -24 24 h-40" fill="none" stroke="#334155" stroke-width="16"/>
+  <rect x="332" y="380" width="150" height="120" rx="10" fill="#f8fafc" stroke="#334155" stroke-width="6"/>
+  <text x="407" y="458" font-family="Arial, sans-serif" font-size="60" font-weight="700" fill="#e11d2f" text-anchor="middle">G12</text>
+</svg>

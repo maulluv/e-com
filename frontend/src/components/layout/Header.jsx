@@ -1,0 +1,155 @@
+import { useState } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Menu, Phone, ShoppingCart, Truck, User, Wrench, X } from "lucide-react";
+import { Container } from "../ui/Container";
+import { IconButton } from "../ui/IconButton";
+import { SearchBar } from "../catalog/SearchBar";
+import { useCart } from "../../context/CartContext";
+import { navLinks } from "./navigation";
+import { site } from "../../config/site";
+import { cn } from "../../lib/cn";
+
+/**
+ * Шапка сайту: верхня смуга з контактами, логотип, пошук, навігація,
+ * кабінет і кошик. На мобільних навігація згортається в бургер.
+ */
+export function Header() {
+  const { totalItems, open } = useCart();
+  const navigate = useNavigate();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [search, setSearch] = useState("");
+
+  const submitSearch = (value) => {
+    setSearch(value);
+    // Пошук веде в каталог із запитом у URL.
+    navigate(value ? `/catalog?q=${encodeURIComponent(value)}` : "/catalog");
+  };
+
+  return (
+    <header className="sticky top-0 z-30 bg-surface/90 backdrop-blur">
+      {/* Верхня смуга */}
+      <div className="bg-ink text-white/80">
+        <Container className="flex h-9 items-center justify-between text-xs">
+          <span className="inline-flex items-center gap-1.5">
+            <Truck className="h-3.5 w-3.5 text-brand" />
+            Безкоштовна доставка від {(site.freeShippingFrom / 100).toLocaleString("uk-UA")} ₴
+          </span>
+          <a href={`tel:${site.phone.replace(/[^\d+]/g, "")}`} className="inline-flex items-center gap-1.5 hover:text-white">
+            <Phone className="h-3.5 w-3.5 text-brand" />
+            {site.phone}
+          </a>
+        </Container>
+      </div>
+
+      {/* Основний рядок */}
+      <div className="border-b border-border">
+        <Container className="flex h-16 items-center justify-between gap-4">
+          {/* Лого */}
+          <Link to="/" className="flex items-center gap-2">
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand text-brand-fg">
+              <Wrench className="h-5 w-5" />
+            </span>
+            <span className="text-lg font-extrabold tracking-tight text-fg">
+              {site.name}
+              <span className="text-brand">{site.nameAccent}</span>
+            </span>
+          </Link>
+
+          {/* Пошук (desktop) */}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              submitSearch(search);
+            }}
+            className="hidden flex-1 max-w-md lg:block"
+          >
+            <SearchBar value={search} onChange={setSearch} />
+          </form>
+
+          {/* Дії */}
+          <div className="flex items-center gap-1">
+            <Link
+              to="/account"
+              aria-label="Особистий кабінет"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-xl text-fg transition-colors hover:bg-muted"
+            >
+              <User className="h-5 w-5" />
+            </Link>
+
+            <IconButton label="Кошик" onClick={open}>
+              <ShoppingCart className="h-5 w-5" />
+              {totalItems > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand px-1 text-xs font-semibold text-brand-fg">
+                  {totalItems}
+                </span>
+              )}
+            </IconButton>
+
+            <IconButton
+              label="Меню"
+              className="md:hidden"
+              onClick={() => setMobileOpen((v) => !v)}
+            >
+              {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </IconButton>
+          </div>
+        </Container>
+      </div>
+
+      {/* Нижній рядок навігації (desktop) */}
+      <nav className="hidden border-b border-border bg-surface md:block">
+        <Container className="flex h-11 items-center gap-1">
+          {navLinks.map((link) => (
+            <NavLink
+              key={link.to}
+              to={link.to}
+              end={link.to === "/"}
+              className={({ isActive }) =>
+                cn(
+                  "rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
+                  isActive ? "text-brand" : "text-fg-muted hover:text-fg",
+                )
+              }
+            >
+              {link.label}
+            </NavLink>
+          ))}
+        </Container>
+      </nav>
+
+      {/* Мобільне меню */}
+      {mobileOpen && (
+        <nav className="border-b border-border bg-surface md:hidden">
+          <Container className="flex flex-col py-2">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                submitSearch(search);
+                setMobileOpen(false);
+              }}
+              className="py-2"
+            >
+              <SearchBar value={search} onChange={setSearch} />
+            </form>
+            {navLinks.map((link) => (
+              <NavLink
+                key={link.to}
+                to={link.to}
+                end={link.to === "/"}
+                onClick={() => setMobileOpen(false)}
+                className={({ isActive }) =>
+                  cn(
+                    "rounded-lg px-3 py-3 text-sm font-medium",
+                    isActive ? "text-brand" : "text-fg",
+                  )
+                }
+              >
+                {link.label}
+              </NavLink>
+            ))}
+          </Container>
+        </nav>
+      )}
+    </header>
+  );
+}
