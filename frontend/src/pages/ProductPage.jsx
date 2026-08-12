@@ -15,6 +15,8 @@ import { Button } from "../components/ui/Button";
 import { Badge } from "../components/ui/Badge";
 import { Spinner } from "../components/ui/Spinner";
 import { QuickOrderForm } from "../components/product/QuickOrderForm";
+import { ProductGallery } from "../components/product/ProductGallery";
+import { SimilarProducts } from "../components/product/SimilarProducts";
 import { useProduct } from "../hooks/useProduct";
 import { useCart } from "../context/CartContext";
 import { formatPrice } from "../lib/format";
@@ -82,9 +84,7 @@ export function ProductPage() {
 
       <div className="mt-6 grid gap-8 lg:grid-cols-2">
         {/* Фото */}
-        <div className="overflow-hidden rounded-[var(--radius-card)] border border-border bg-muted">
-          <img src={product.imageUrl} alt={product.title} className="aspect-square w-full object-cover" />
-        </div>
+        <ProductGallery product={product} />
 
         {/* Інформація */}
         <div className="flex flex-col">
@@ -96,10 +96,12 @@ export function ProductPage() {
               {product.oem ? "Оригінал" : "Аналог"}
             </Badge>
             <Badge tone="neutral">{product.condition}</Badge>
+            {product.sale && <Badge tone="danger">Акція</Badge>}
+            {product.isNew && <Badge tone="success">Новинка</Badge>}
             {product.inStock ? (
-              <Badge tone="success">В наявності</Badge>
+              <Badge tone="success" dot>В наявності</Badge>
             ) : (
-              <Badge tone="danger">Немає в наявності</Badge>
+              <Badge tone="danger" dot>Немає в наявності</Badge>
             )}
           </div>
 
@@ -122,9 +124,16 @@ export function ProductPage() {
 
           {/* Ціна + кошик */}
           <div className="mt-6 flex flex-wrap items-center gap-4">
-            <span className="text-3xl font-bold text-fg">
-              {formatPrice(product.price, product.currency)}
-            </span>
+            <div className="flex flex-col">
+              {product.sale && product.oldPrice && (
+                <span className="text-sm text-fg-muted line-through">
+                  {formatPrice(product.oldPrice, product.currency)}
+                </span>
+              )}
+              <span className={`text-3xl font-bold ${product.sale ? "text-brand" : "text-fg"}`}>
+                {formatPrice(product.price, product.currency)}
+              </span>
+            </div>
 
             <div className="flex items-center rounded-xl border border-border">
               <button
@@ -191,6 +200,9 @@ export function ProductPage() {
           </ul>
         </div>
       </div>
+
+      {/* Схожі товари */}
+      <SimilarProducts product={product} />
     </Container>
   );
 }

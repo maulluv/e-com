@@ -4,6 +4,7 @@ import { Button } from "../ui/Button";
 import { Badge } from "../ui/Badge";
 import { useCart } from "../../context/CartContext";
 import { formatPrice } from "../../lib/format";
+import { cn } from "../../lib/cn";
 
 /** Картка товару. Уся картка — посилання на сторінку товару; кнопка "Купити" не навігує. */
 export function ProductCard({ product }) {
@@ -33,26 +34,38 @@ export function ProductCard({ product }) {
             <Badge tone="neutral">Немає в наявності</Badge>
           </div>
         )}
-        {product.condition === "Б/в" && (
-          <div className="absolute left-3 top-3">
-            <Badge tone="neutral">Б/в</Badge>
-          </div>
-        )}
+        {/* Мітки: акція / новинка / б/в */}
+        <div className="absolute left-3 top-3 flex flex-col items-start gap-1.5">
+          {product.sale && <Badge tone="danger">Акція</Badge>}
+          {product.isNew && <Badge tone="success">Новинка</Badge>}
+          {product.condition === "Б/в" && <Badge tone="neutral">Б/в</Badge>}
+        </div>
       </div>
 
       <div className="flex flex-1 flex-col p-4">
-        <div className="flex items-center justify-between text-xs">
-          <span className="font-semibold uppercase tracking-wide text-brand">{product.brand}</span>
-          <span className="text-fg-muted">Арт. {product.sku}</span>
+        <div className="flex items-baseline justify-between gap-2 text-xs">
+          <span className="shrink-0 font-semibold uppercase tracking-wide text-brand">
+            {product.brand}
+          </span>
+          <span className="min-w-0 truncate text-right text-fg-muted" title={`Арт. ${product.sku}`}>
+            Арт. {product.sku}
+          </span>
         </div>
 
         <h3 className="mt-1.5 font-semibold leading-snug text-fg">{product.title}</h3>
         <p className="mt-1 line-clamp-2 text-sm text-fg-muted">{product.description}</p>
 
         <div className="mt-4 flex items-center justify-between gap-2">
-          <span className="text-lg font-bold text-fg">
-            {formatPrice(product.price, product.currency)}
-          </span>
+          <div className="flex flex-col">
+            {product.sale && product.oldPrice && (
+              <span className="text-xs text-fg-muted line-through">
+                {formatPrice(product.oldPrice, product.currency)}
+              </span>
+            )}
+            <span className={cn("text-lg font-bold", product.sale ? "text-brand" : "text-fg")}>
+              {formatPrice(product.price, product.currency)}
+            </span>
+          </div>
           <Button
             size="sm"
             onClick={handleBuy}

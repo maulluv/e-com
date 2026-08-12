@@ -46,7 +46,11 @@ export function Header() {
       <div className="border-b border-border">
         <Container className="flex h-16 items-center justify-between gap-4">
           {/* Лого */}
-          <Link to="/" className="flex items-center gap-2">
+          <Link
+            to="/"
+            onClick={() => window.scrollTo({ top: 0 })}
+            className="flex items-center gap-2"
+          >
             <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand text-brand-fg">
               <Wrench className="h-5 w-5" />
             </span>

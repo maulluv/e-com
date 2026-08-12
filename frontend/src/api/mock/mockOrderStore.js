@@ -45,6 +45,9 @@ export const mockOrderStore = {
       total: items.reduce((sum, i) => sum + i.price * i.quantity, 0),
       currency: "UAH",
       customer: payload.customer,
+      delivery: payload.delivery ?? null,
+      payment: payload.payment ?? null,
+      comment: payload.comment ?? "",
       status: "new",
       createdAt: new Date().toISOString(),
     };
