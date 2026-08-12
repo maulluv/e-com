@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800">
+  <rect width="800" height="800" fill="#eef2f7"/>
+  <!-- умовна деталь -->
+  <circle cx="360" cy="360" r="120" fill="#cbd5e1" stroke="#334155" stroke-width="8"/>
+  <circle cx="360" cy="360" r="46" fill="#94a3b8" stroke="#334155" stroke-width="8"/>
+  <!-- лупа -->
+  <circle cx="470" cy="470" r="110" fill="#ffffff" fill-opacity="0.55" stroke="#334155" stroke-width="14"/>
+  <line x1="548" y1="548" x2="620" y2="620" stroke="#334155" stroke-width="26" stroke-linecap="round"/>
+  <circle cx="470" cy="470" r="10" fill="#e11d2f"/>
+</svg>

@@ -14,7 +14,7 @@ export function Footer() {
       <Container className="grid grid-cols-2 gap-8 py-12 md:grid-cols-4">
         {/* Бренд */}
         <div className="col-span-2 md:col-span-1">
-          <Link to="/" className="flex items-center gap-2">
+          <Link to="/" onClick={() => window.scrollTo({ top: 0 })} className="flex items-center gap-2">
             <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand text-brand-fg">
               <Wrench className="h-5 w-5" />
             </span>

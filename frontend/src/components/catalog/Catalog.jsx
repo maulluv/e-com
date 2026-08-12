@@ -9,6 +9,7 @@ import { Drawer } from "../ui/Drawer";
 import { SearchBar } from "./SearchBar";
 import { CategoryModal } from "./CategoryModal";
 import { Filters } from "./Filters";
+import { SortSelect } from "./SortSelect";
 import { VehicleSelect } from "../vehicle/VehicleSelect";
 import { categoryLabel, subcategoryLabel } from "../../config/categories";
 
@@ -41,6 +42,7 @@ export function Catalog({ controls = true, limit }) {
   const activeCat = params.get("cat") ?? "all";
   const activeSub = params.get("sub") ?? "";
   const query = params.get("q") ?? "";
+  const sort = params.get("sort") ?? "popular";
 
   const setParam = (updates) => {
     const next = new URLSearchParams(params);
@@ -111,7 +113,24 @@ export function Catalog({ controls = true, limit }) {
     });
   }, [prefiltered, facets]);
 
-  const visible = limit ? filtered.slice(0, limit) : filtered;
+  // 3) сортування / добірка (популярні = типовий порядок)
+  const sorted = useMemo(() => {
+    const list = [...filtered];
+    switch (sort) {
+      case "cheap":
+        return list.sort((a, b) => a.price - b.price);
+      case "expensive":
+        return list.sort((a, b) => b.price - a.price);
+      case "sale":
+        return list.filter((p) => p.sale);
+      case "new":
+        return list.filter((p) => p.isNew);
+      default:
+        return list;
+    }
+  }, [filtered, sort]);
+
+  const visible = limit ? sorted.slice(0, limit) : sorted;
 
   const activeFacetCount =
     facets.conditions.length +
@@ -197,24 +216,27 @@ export function Catalog({ controls = true, limit }) {
       <div className="flex gap-6">
         {/* Бічна панель фасетів (desktop) */}
         <aside className="hidden w-60 shrink-0 lg:block">
-          <div className="sticky top-24">{filtersNode}</div>
+          <div className="sticky top-40">{filtersNode}</div>
         </aside>
 
         {/* Товари */}
         <div className="min-w-0 flex-1">
-          <div className="mb-4 flex items-center justify-between gap-3">
-            <button
-              onClick={() => setFiltersOpen(true)}
-              className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-sm font-medium text-fg transition-colors hover:bg-muted lg:hidden"
-            >
-              <SlidersHorizontal className="h-4 w-4" /> Фільтри
-              {hasActiveFacets && (
-                <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-brand px-1 text-xs font-semibold text-brand-fg">
-                  {activeFacetCount}
-                </span>
-              )}
-            </button>
-            <span className="ml-auto text-sm text-fg-muted">Знайдено: {filtered.length}</span>
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setFiltersOpen(true)}
+                className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-medium text-fg transition-colors hover:bg-muted lg:hidden"
+              >
+                <SlidersHorizontal className="h-4 w-4" /> Фільтри
+                {hasActiveFacets && (
+                  <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-brand px-1 text-xs font-semibold text-brand-fg">
+                    {activeFacetCount}
+                  </span>
+                )}
+              </button>
+              <SortSelect value={sort} onChange={(id) => setParam({ sort: id === "popular" ? "" : id })} />
+            </div>
+            <span className="text-sm text-fg-muted">Знайдено: {sorted.length}</span>
           </div>
 
           {grid}

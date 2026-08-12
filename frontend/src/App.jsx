@@ -5,6 +5,8 @@ import { Layout } from "./components/layout/Layout";
 import { HomePage } from "./pages/HomePage";
 import { CatalogPage } from "./pages/CatalogPage";
 import { ProductPage } from "./pages/ProductPage";
+import { CartPage } from "./pages/CartPage";
+import { CheckoutPage } from "./pages/CheckoutPage";
 import { AboutPage } from "./pages/AboutPage";
 import { DeliveryPage } from "./pages/DeliveryPage";
 import { ReturnsPage } from "./pages/ReturnsPage";
@@ -19,6 +21,8 @@ const router = createBrowserRouter([
       { path: "/", element: <HomePage /> },
       { path: "/catalog", element: <CatalogPage /> },
       { path: "/product/:id", element: <ProductPage /> },
+      { path: "/cart", element: <CartPage /> },
+      { path: "/checkout", element: <CheckoutPage /> },
       { path: "/about", element: <AboutPage /> },
       { path: "/delivery", element: <DeliveryPage /> },
       { path: "/returns", element: <ReturnsPage /> },

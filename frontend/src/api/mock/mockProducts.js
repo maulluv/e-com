@@ -10,6 +10,8 @@
  *   brand       — виробник, sku — артикул
  *   condition   — стан: "Новий" | "Б/в"
  *   oem         — true (Оригінал) | false (Аналог)
+ *   sale        — (необов'язково) true = акція; oldPrice — стара ціна в копійках
+ *   isNew       — (необов'язково) true = новинка
  *   fits        — (необов'язково) id марок авто, яким підходить деталь.
  *                 Без цього поля товар вважається універсальним.
  */
@@ -58,6 +60,8 @@ export const mockProducts = [
     imageUrl: "/images/oil-filter.svg",
     category: "filters",
     subcategory: "oil-filter",
+    sale: true,
+    oldPrice: 32900,
     condition: "Новий",
     oem: true,
     inStock: true,
@@ -90,6 +94,7 @@ export const mockProducts = [
     imageUrl: "/images/spark-plug.svg",
     category: "engine",
     subcategory: "spark-plugs",
+    isNew: true,
     condition: "Новий",
     oem: true,
     inStock: true,
@@ -156,6 +161,8 @@ export const mockProducts = [
     imageUrl: "/images/motor-oil.svg",
     category: "oils",
     subcategory: "motor-oil",
+    sale: true,
+    oldPrice: 179900,
     condition: "Новий",
     oem: true,
     inStock: true,
@@ -188,6 +195,7 @@ export const mockProducts = [
     imageUrl: "/images/battery.svg",
     category: "electric",
     subcategory: "batteries",
+    isNew: true,
     condition: "Новий",
     oem: true,
     inStock: true,
@@ -204,6 +212,7 @@ export const mockProducts = [
     imageUrl: "/images/tire.svg",
     category: "tires",
     subcategory: "summer-tires",
+    isNew: true,
     condition: "Новий",
     oem: true,
     inStock: true,
@@ -220,6 +229,8 @@ export const mockProducts = [
     imageUrl: "/images/wiper.svg",
     category: "body",
     subcategory: "wipers",
+    sale: true,
+    oldPrice: 44900,
     condition: "Новий",
     oem: true,
     inStock: true,

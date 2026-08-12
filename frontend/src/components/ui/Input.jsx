@@ -1,10 +1,13 @@
 import { cn } from "../../lib/cn";
 
-/** Текстове поле з підписом та повідомленням про помилку. */
-export function Input({ label, error, className, id, ...props }) {
+/**
+ * Текстове поле з підписом та повідомленням про помилку.
+ * className — на сам <input>; wrapperClassName — на обгортку (напр. col-span у grid).
+ */
+export function Input({ label, error, className, wrapperClassName, id, ...props }) {
   const inputId = id ?? props.name;
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className={cn("flex flex-col gap-1.5", wrapperClassName)}>
       {label && (
         <label htmlFor={inputId} className="text-sm font-medium text-fg">
           {label}
