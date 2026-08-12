@@ -58,7 +58,7 @@ export function CartDrawer() {
             <div>
               <p className="text-lg font-semibold text-fg">Замовлення прийнято!</p>
               <p className="mt-1 text-sm text-fg-muted">
-                Ми зв'яжемося з вами найближчим часом. Замовлення також збережено в кабінеті.
+                Ми зв'яжемося з вами найближчим часом для підтвердження.
               </p>
             </div>
             <Button onClick={handleClose}>Продовжити покупки</Button>
