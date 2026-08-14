@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage";
+import { useToast } from "./ToastContext";
 
 const CartContext = createContext(null);
 
@@ -12,6 +13,7 @@ const CartContext = createContext(null);
 export function CartProvider({ children }) {
   const [items, setItems, resetItems] = useLocalStorage("cart", []);
   const [isOpen, setIsOpen] = useState(false);
+  const { show } = useToast();
 
   const addItem = useCallback(
     (product, quantity = 1) => {
@@ -24,9 +26,9 @@ export function CartProvider({ children }) {
         }
         return [...prev, { product, quantity }];
       });
-      setIsOpen(true);
+      show("Додано в кошик");
     },
-    [setItems],
+    [setItems, show],
   );
 
   const removeItem = useCallback(
