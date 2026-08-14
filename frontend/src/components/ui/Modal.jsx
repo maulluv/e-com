@@ -1,10 +1,15 @@
 import { useEffect } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { cn } from "../../lib/cn";
 
 /**
  * Універсальне модальне вікно: затемнення + панель по центру.
  * Закривається кліком по фону, хрестиком або Esc. Блокує прокрутку сторінки.
+ *
+ * Рендериться через портал у <body> — інакше `position: fixed` ламається,
+ * якщо модал відкрито з елемента всередині хедера (у якого backdrop-blur
+ * створює containing block для fixed-нащадків).
  *
  * header — довільний вміст шапки (зліва); якщо не задано, показуємо title.
  */
@@ -22,7 +27,7 @@ export function Modal({ open, onClose, title, header, children, maxWidth = "max-
 
   if (!open) return null;
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/50 p-4 sm:p-6"
       onClick={onClose}
@@ -43,6 +48,7 @@ export function Modal({ open, onClose, title, header, children, maxWidth = "max-
         </div>
         <div className="p-4 sm:p-6">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
