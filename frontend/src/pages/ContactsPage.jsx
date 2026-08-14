@@ -38,7 +38,7 @@ export function ContactsPage() {
 
       <div className="mt-8 grid gap-8 lg:grid-cols-2">
         {/* Контактна інформація */}
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-4 self-start sm:grid-cols-2">
           {contactItems.map((c) => (
             <div
               key={c.label}
