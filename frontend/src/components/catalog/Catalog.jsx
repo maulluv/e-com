@@ -1,10 +1,11 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { ChevronDown, ListFilter, SlidersHorizontal, X } from "lucide-react";
 import { useProducts } from "../../hooks/useProducts";
 import { useVehicle } from "../../context/VehicleContext";
 import { ProductCard } from "../product/ProductCard";
-import { Spinner } from "../ui/Spinner";
+import { ProductCardSkeleton } from "../product/ProductCardSkeleton";
+import { Button } from "../ui/Button";
 import { Drawer } from "../ui/Drawer";
 import { SearchBar } from "./SearchBar";
 import { CategoryModal } from "./CategoryModal";
@@ -12,6 +13,8 @@ import { Filters } from "./Filters";
 import { SortSelect } from "./SortSelect";
 import { VehicleSelect } from "../vehicle/VehicleSelect";
 import { categoryLabel, subcategoryLabel } from "../../config/categories";
+
+const PAGE_SIZE = 8;
 
 const EMPTY_FACETS = {
   conditions: [],
@@ -131,7 +134,14 @@ export function Catalog({ controls = true, limit }) {
     }
   }, [filtered, sort]);
 
-  const visible = limit ? sorted.slice(0, limit) : sorted;
+  // Пагінація «Показати ще» (лише на повному каталозі, не в блоці з limit).
+  const [page, setPage] = useState(1);
+  useEffect(() => {
+    setPage(1);
+  }, [activeCat, activeSub, query, sort, vehicle, facets]);
+
+  const visible = limit ? sorted.slice(0, limit) : sorted.slice(0, page * PAGE_SIZE);
+  const hasMore = !limit && visible.length < sorted.length;
 
   const activeFacetCount =
     facets.conditions.length +
@@ -142,9 +152,15 @@ export function Catalog({ controls = true, limit }) {
     (facets.priceMax ? 1 : 0);
   const hasActiveFacets = activeFacetCount > 0;
 
+  const gridClass = controls
+    ? "grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4"
+    : "grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4";
+
   const grid = loading ? (
-    <div className="flex justify-center py-20">
-      <Spinner className="h-8 w-8" />
+    <div className={gridClass}>
+      {Array.from({ length: limit ?? PAGE_SIZE }).map((_, i) => (
+        <ProductCardSkeleton key={i} />
+      ))}
     </div>
   ) : error ? (
     <p className="py-20 text-center text-danger">Не вдалося завантажити товари: {error}</p>
@@ -153,17 +169,20 @@ export function Catalog({ controls = true, limit }) {
       Нічого не знайдено. Спробуйте змінити фільтри або пошуковий запит.
     </p>
   ) : (
-    <div
-      className={
-        controls
-          ? "grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4"
-          : "grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4"
-      }
-    >
-      {visible.map((product) => (
-        <ProductCard key={product.id} product={product} />
-      ))}
-    </div>
+    <>
+      <div className={gridClass}>
+        {visible.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </div>
+      {hasMore && (
+        <div className="mt-8 flex justify-center">
+          <Button variant="outline" onClick={() => setPage((p) => p + 1)}>
+            Показати ще
+          </Button>
+        </div>
+      )}
+    </>
   );
 
   // Блок на головній — лише сітка.

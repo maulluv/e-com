@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { ChevronDown, Menu, Phone, ShoppingCart, Truck, Wrench, X } from "lucide-react";
+import { ChevronDown, Heart, Menu, Phone, ShoppingCart, Truck, Wrench, X } from "lucide-react";
 import { Container } from "../ui/Container";
 import { IconButton } from "../ui/IconButton";
 import { SearchBar } from "../catalog/SearchBar";
+import { HeaderVehicle } from "../vehicle/HeaderVehicle";
 import { useCart } from "../../context/CartContext";
+import { useWishlist } from "../../context/WishlistContext";
 import { navLinks } from "./navigation";
 import { site } from "../../config/site";
 import { cn } from "../../lib/cn";
@@ -16,6 +18,7 @@ import { cn } from "../../lib/cn";
  */
 export function Header() {
   const { totalItems, open } = useCart();
+  const { count: wishCount } = useWishlist();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -73,6 +76,19 @@ export function Header() {
 
           {/* Дії */}
           <div className="flex items-center gap-1">
+            <Link
+              to="/wishlist"
+              aria-label="Обране"
+              className="relative inline-flex h-10 w-10 items-center justify-center rounded-xl text-fg transition-colors hover:bg-muted"
+            >
+              <Heart className="h-5 w-5" />
+              {wishCount > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand px-1 text-xs font-semibold text-brand-fg">
+                  {wishCount}
+                </span>
+              )}
+            </Link>
+
             <IconButton label="Кошик" onClick={open}>
               <ShoppingCart className="h-5 w-5" />
               {totalItems > 0 && (
@@ -95,7 +111,8 @@ export function Header() {
 
       {/* Нижній рядок навігації (desktop) */}
       <nav className="hidden border-b border-border bg-surface md:block">
-        <Container className="flex h-11 items-center gap-1">
+        <Container className="flex h-12 items-center gap-1">
+          <HeaderVehicle className="mr-2 hidden lg:inline-flex" />
           {navLinks.map((link) =>
             link.children ? (
               <DesktopDropdown key={link.to} link={link} />
@@ -127,6 +144,10 @@ export function Header() {
             >
               <SearchBar value={search} onChange={setSearch} />
             </form>
+
+            <div className="py-2">
+              <HeaderVehicle className="w-full justify-start" />
+            </div>
 
             {navLinks.map((link) =>
               link.children ? (

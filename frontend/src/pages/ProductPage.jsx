@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   ArrowLeft,
+  Heart,
   Minus,
   Plus,
   ShoppingCart,
@@ -17,17 +18,30 @@ import { Spinner } from "../components/ui/Spinner";
 import { QuickOrderForm } from "../components/product/QuickOrderForm";
 import { ProductGallery } from "../components/product/ProductGallery";
 import { SimilarProducts } from "../components/product/SimilarProducts";
+import { RecentlyViewed } from "../components/product/RecentlyViewed";
 import { useProduct } from "../hooks/useProduct";
+import { usePageTitle } from "../hooks/usePageTitle";
+import { useRecentlyViewed } from "../hooks/useRecentlyViewed";
 import { useCart } from "../context/CartContext";
+import { useWishlist } from "../context/WishlistContext";
 import { formatPrice } from "../lib/format";
 import { categoryLabel, subcategoryLabel } from "../config/categories";
 import { groupCompatibility } from "../config/vehicles";
+import { cn } from "../lib/cn";
 
 export function ProductPage() {
   const { id } = useParams();
   const { product, loading, error } = useProduct(id);
   const { addItem } = useCart();
+  const { has, toggle } = useWishlist();
+  const { track } = useRecentlyViewed();
   const [qty, setQty] = useState(1);
+
+  usePageTitle(product?.title);
+
+  useEffect(() => {
+    if (product) track(product);
+  }, [product, track]);
 
   if (loading) {
     return (
@@ -163,6 +177,14 @@ export function ProductPage() {
             <Button size="lg" onClick={() => addItem(product, qty)} disabled={!product.inStock}>
               <ShoppingCart className="h-5 w-5" /> Додати в кошик
             </Button>
+
+            <button
+              onClick={() => toggle(product)}
+              aria-label={has(product.id) ? "Прибрати з обраного" : "Додати в обране"}
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-border text-fg-muted transition-colors hover:border-brand hover:text-brand"
+            >
+              <Heart className={cn("h-5 w-5", has(product.id) && "fill-brand text-brand")} />
+            </button>
           </div>
 
           {/* Швидке замовлення */}
@@ -209,6 +231,9 @@ export function ProductPage() {
 
       {/* Схожі товари */}
       <SimilarProducts product={product} />
+
+      {/* Нещодавно переглянуті */}
+      <RecentlyViewed excludeId={product.id} />
     </Container>
   );
 }

@@ -1,21 +1,30 @@
 import { Link } from "react-router-dom";
-import { Car, ShoppingCart } from "lucide-react";
+import { Car, Heart, ShoppingCart } from "lucide-react";
 import { Button } from "../ui/Button";
 import { Badge } from "../ui/Badge";
 import { useCart } from "../../context/CartContext";
+import { useWishlist } from "../../context/WishlistContext";
 import { formatPrice } from "../../lib/format";
 import { compatibleBrands } from "../../config/vehicles";
 import { cn } from "../../lib/cn";
 
-/** Картка товару. Уся картка — посилання на сторінку товару; кнопка "Купити" не навігує. */
+/** Картка товару. Уся картка — посилання на сторінку товару; кнопки не навігують. */
 export function ProductCard({ product }) {
   const { addItem } = useCart();
+  const { has, toggle } = useWishlist();
+  const inWishlist = has(product.id);
 
   const handleBuy = (e) => {
     // Не переходимо на сторінку товару — просто додаємо в кошик.
     e.preventDefault();
     e.stopPropagation();
     addItem(product);
+  };
+
+  const handleWishlist = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggle(product);
   };
 
   return (
@@ -41,6 +50,15 @@ export function ProductCard({ product }) {
           {product.isNew && <Badge tone="success">Новинка</Badge>}
           {product.condition === "Б/в" && <Badge tone="neutral">Б/в</Badge>}
         </div>
+
+        {/* Обране */}
+        <button
+          onClick={handleWishlist}
+          aria-label={inWishlist ? "Прибрати з обраного" : "Додати в обране"}
+          className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-surface/90 text-fg-muted shadow-sm backdrop-blur transition-colors hover:text-brand"
+        >
+          <Heart className={cn("h-5 w-5", inWishlist && "fill-brand text-brand")} />
+        </button>
       </div>
 
       <div className="flex flex-1 flex-col p-4">
